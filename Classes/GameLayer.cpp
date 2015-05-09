@@ -7,6 +7,7 @@
 //
 
 #include "GameLayer.h"
+#include "TitleLayer.h"
 #include "SimpleAudioEngine.h"
 
 #define WINSIZE Director::getInstance()->getWinSize()
@@ -84,6 +85,7 @@ void GameLayer::onEnter()
     scene->getPhysicsWorld()->setGravity(v);
     //scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     
+    showStageLebel();
     
     createBackground();
     createGround();
@@ -105,6 +107,35 @@ void GameLayer::update(float dt)
         successGame();
     }
 }
+
+//レベル（ステージ）表示
+void GameLayer::showStageLebel()
+{
+    auto levelLabel = LayerColor::create(Color4B(0, 0, 0, 191), WINSIZE.width, WINSIZE.height);
+    levelLabel->setPosition(Point::ZERO);
+    levelLabel->setTag(T_Lebel);
+    
+    addChild(levelLabel, ZOrder::Z_Lebel);
+    
+    auto levelSprite = Sprite::create("Level.png");
+    levelSprite->setPosition(Point(WINSIZE.width * 0.45, WINSIZE.height * 0.5));
+    levelLabel->addChild(levelSprite);
+    
+    auto lebelNum = StringUtils::format("%d.png", _level);
+    auto lebelNumSprite = Sprite::create(lebelNum.c_str());
+    lebelNumSprite->setPosition(Point(WINSIZE.width * 0.7, WINSIZE.height * 0.5));
+    levelLabel->addChild(lebelNumSprite);
+    
+    scheduleOnce(schedule_selector(GameLayer::removeStageLebel), 3.0);
+}
+
+//レベル（ステージ）表示の削除
+void GameLayer::removeStageLebel(float dt)
+{
+    auto levelLayer = getChildByTag(T_Lebel);
+    levelLayer->runAction(Sequence::create(FadeTo::create(0.5, 0), RemoveSelf::create(),nullptr));
+}
+
 
 //背景の作成
 void GameLayer::createBackground()
@@ -469,7 +500,7 @@ void GameLayer::successGame()
 {
     auto success = Sprite::create("success.png");
     success->setPosition(Point(WINSIZE / 2));
-    success->setScale(1.5);
+    success->setScale(2.0);
     success->setOpacity(0);
     addChild(success, Z_Result);
     
@@ -479,6 +510,7 @@ void GameLayer::successGame()
     auto func = CallFunc::create([this]()
     {
         int nextlevel;
+        
         if(_level >= 3)
         {
             nextlevel = 1;

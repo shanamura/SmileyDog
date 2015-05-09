@@ -25,6 +25,8 @@ protected:
         T_Gum1,
         T_Gum2,
         T_Block,
+        
+        T_Lebel,
     };
     
     enum ZOrder
@@ -42,6 +44,7 @@ protected:
         Z_Fog,
         Z_Star,
         
+        Z_Lebel,
         Z_Result,
     };
     
@@ -57,6 +60,9 @@ protected:
     int _remaining;
     //ステージ
     int _level;
+    
+    void showStageLebel();
+    void removeStageLebel(float dt);
     
     void createBackground();
     void createGround();
