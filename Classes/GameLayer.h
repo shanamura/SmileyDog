@@ -81,11 +81,13 @@ protected:
     
     
 public:
-    static cocos2d::Scene* createScene(int remaining, int level);
     virtual bool init(int remaining, int level);
+    
+    static cocos2d::Scene* createScene(int remaining, int level);
     
     //引数を持たせるのでCREATE_FUNC(GameLayer)の代わりに以下へ変更
     static GameLayer* create(int remaining, int level);
+
     
     virtual void onEnter();
     virtual void update(float dt);

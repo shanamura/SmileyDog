@@ -20,6 +20,7 @@
 USING_NS_CC;
 using namespace CocosDenshion;
 
+//レイヤーの作成
 GameLayer* GameLayer::create(int remaining, int level)
 {
     GameLayer* pRet = new GameLayer();
@@ -29,6 +30,7 @@ GameLayer* GameLayer::create(int remaining, int level)
     return pRet;
 }
 
+//ゲーム画面の作成
 Scene* GameLayer::createScene(int remaining, int level)
 {
     auto scene = Scene::createWithPhysics();
@@ -39,6 +41,7 @@ Scene* GameLayer::createScene(int remaining, int level)
     return scene;
 }
 
+
 //ゲームの初期化
 bool GameLayer::init(int remaining, int level)
 {
@@ -46,7 +49,7 @@ bool GameLayer::init(int remaining, int level)
     {
         return false;
     }
-    
+
     _remaining = remaining;
     _level = level;
     
@@ -68,11 +71,6 @@ bool GameLayer::init(int remaining, int level)
     audio->preloadEffect("bgm.mp3");
     audio->preloadEffect("bgm.mp3");
     
-    if(!audio->isBackgroundMusicPlaying())
-    {
-        audio->playBackgroundMusic("bgm.mp3", true);
-    }
-    
     return true;
 }
 
@@ -84,7 +82,7 @@ void GameLayer::onEnter()
     auto scene = dynamic_cast<Scene*>(this->getParent());
     
     scene->getPhysicsWorld()->setGravity(v);
-    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     
     
     createBackground();
@@ -95,6 +93,7 @@ void GameLayer::onEnter()
     createBlockAndEnemy(_level);
 }
 
+//ゲームクリア判定
 void GameLayer::update(float dt)
 {
     auto enemy = getChildByTag(T_Enemy);
@@ -107,6 +106,7 @@ void GameLayer::update(float dt)
     }
 }
 
+//背景の作成
 void GameLayer::createBackground()
 {
     auto background = Sprite::create("background.png");
@@ -115,6 +115,7 @@ void GameLayer::createBackground()
     addChild(background, Z_BackGround, T_BackGround);
 }
 
+//地面の作成
 void GameLayer::createGround()
 {
     auto background = getChildByTag(T_BackGround);
@@ -135,8 +136,10 @@ void GameLayer::createGround()
     addChild(node);
 }
 
+//ボールと発射台の作成
 void GameLayer::createBall()
 {
+    //ボール
     auto ball = Sprite::create("ball.png");
     ball->setPosition(BALL_INIT_POS);
     ball->setTag(T_Ball);
@@ -154,6 +157,7 @@ void GameLayer::createBall()
     
     addChild(ball);
     
+    //発射台
     auto launcher1 = Sprite::create("launcher1.png");
     launcher1->setScale(0.5);
     launcher1->setPosition(Point(100, 100));
@@ -189,34 +193,7 @@ void GameLayer::applyingForceToBall(Node* ball)
     ball->getPhysicsBody()->applyImpulse(force);
 }
 
-
-void GameLayer::createEnemy(cocos2d::Point position)
-{
-    auto enemy = Sprite::create("enemy1.png");
-    enemy->setPosition(position);
-    enemy->setTag(T_Enemy);
-    
-    auto animation = Animation::create();
-    animation->addSpriteFrameWithFile("enemy2.png");
-    animation->addSpriteFrameWithFile("enemy1.png");
-    animation->setDelayPerUnit(1);
-    
-    auto repeat = RepeatForever::create(Animate::create(animation));
-    enemy->runAction(repeat);
-    
-    PhysicsMaterial material;
-    material.density = 0.5;
-    material.restitution = 0.5;
-    material.friction = 0.3;
-    
-    auto body = PhysicsBody::createCircle(enemy->getContentSize().width * 0.47, material);
-    body->setContactTestBitmask(0x01);
-    body->setDynamic(true);
-    enemy->setPhysicsBody(body);
-    
-    addChild(enemy, Z_Enemy);
-}
-
+//ステージを構成する敵とブロックの指定
 void GameLayer::createBlockAndEnemy(int level)
 {
     switch (level) {
@@ -249,7 +226,7 @@ void GameLayer::createBlockAndEnemy(int level)
             createBlock(BlockType::Stone, Point(636, 75), 0);
             createBlock(BlockType::Stone, Point(736, 75), 0);
             createBlock(BlockType::Stone, Point(836, 75), 0);
-
+            
             createBlock(BlockType::Block1, Point(486, 150), 90);
             createBlock(BlockType::Block1, Point(586, 150), 90);
             createBlock(BlockType::Block1, Point(686, 150), 90);
@@ -278,23 +255,52 @@ void GameLayer::createBlockAndEnemy(int level)
             createBlock(BlockType::Block1, Point(586, 150), 90);
             createBlock(BlockType::Block1, Point(686, 150), 90);
             createBlock(BlockType::Block1, Point(786, 150), 90);
-
-            createBlock(BlockType::Block1, Point(586, 210), 0);
-            createBlock(BlockType::Block1, Point(686, 210), 0);
-            createBlock(BlockType::Block1, Point(786, 210), 0);
-
+            
+            createBlock(BlockType::Block1, Point(536, 210), 0);
+            createBlock(BlockType::Block1, Point(636, 210), 0);
+            createBlock(BlockType::Block1, Point(736, 210), 0);
+            
             createBlock(BlockType::Block1, Point(586, 270), 90);
             createBlock(BlockType::Block1, Point(686, 270), 90);
             
             createBlock(BlockType::Roof, Point(636, 345), 0);
             break;
         }
-        
+            
         default:
             break;
     }
 }
 
+//敵の作成
+void GameLayer::createEnemy(cocos2d::Point position)
+{
+    auto enemy = Sprite::create("enemy1.png");
+    enemy->setPosition(position);
+    enemy->setTag(T_Enemy);
+    
+    auto animation = Animation::create();
+    animation->addSpriteFrameWithFile("enemy2.png");
+    animation->addSpriteFrameWithFile("enemy1.png");
+    animation->setDelayPerUnit(1);
+    
+    auto repeat = RepeatForever::create(Animate::create(animation));
+    enemy->runAction(repeat);
+    
+    PhysicsMaterial material;
+    material.density = 0.5;
+    material.restitution = 0.5;
+    material.friction = 0.3;
+    
+    auto body = PhysicsBody::createCircle(enemy->getContentSize().width * 0.47, material);
+    body->setContactTestBitmask(0x01);
+    body->setDynamic(true);
+    enemy->setPhysicsBody(body);
+    
+    addChild(enemy, Z_Enemy);
+}
+
+//ブロックの作成
 void GameLayer::createBlock(BlockType type, Point position, float angle)
 {
     std::string filename;
@@ -356,6 +362,7 @@ void GameLayer::createBlock(BlockType type, Point position, float angle)
     addChild(block, (int)ZOrder::Z_Block);
 }
 
+//衝突判定
 bool GameLayer::onContactBegin(PhysicsContact& contact)
 {
     auto bodyA = contact.getShapeA()->getBody();
@@ -407,6 +414,7 @@ bool GameLayer::onContactBegin(PhysicsContact& contact)
     return true;
 }
 
+//ボールエフェクト
 void GameLayer::contactedBall()
 {
     //衝突時に発生する星の表示
@@ -424,6 +432,7 @@ void GameLayer::contactedBall()
     star->runAction(sequence);
 }
 
+//敵の削除
 void GameLayer::removingEnemy(Node* enemy)
 {
     SimpleAudioEngine::getInstance()->playEffect("hit.mp3");
@@ -455,6 +464,59 @@ void GameLayer::removingEnemy(Node* enemy)
     enemy->removeFromParent();
 }
 
+//ゲームクリア表示及び次のステージへの移動
+void GameLayer::successGame()
+{
+    auto success = Sprite::create("success.png");
+    success->setPosition(Point(WINSIZE / 2));
+    success->setScale(1.5);
+    success->setOpacity(0);
+    addChild(success, Z_Result);
+    
+    auto fadein = FadeIn::create(0.5);
+    auto delay = DelayTime::create(2.0);
+    auto fadeout = FadeOut::create(0.5);
+    auto func = CallFunc::create([this]()
+    {
+        int nextlevel;
+        if(_level >= 3)
+        {
+            nextlevel = 1;
+        }
+        else
+        {
+            nextlevel = _level + 1;
+        }
+        
+        auto scene = GameLayer::createScene(_remaining, nextlevel);
+        auto tran = TransitionFade::create(2.0, scene);
+        Director::getInstance()->replaceScene(tran);
+    });
+    
+    auto sequence = Sequence::create(fadein, delay, fadeout, func, nullptr);
+    success->runAction(sequence);
+}
+
+//ゲームオーバー判定
+void GameLayer::failureGame(float dt)
+{
+    unscheduleUpdate();
+    
+    if(--_remaining <= 0)
+    {
+        auto failure = Sprite::create("failure.png");
+        failure->setPosition(Point(WINSIZE / 2));
+        failure->setScale(1.5);
+        addChild(failure, Z_Result);
+    }
+    else{
+        removeChildByTag(T_Ball);
+        createBall();
+    }
+}
+
+
+//タッチイベント
 bool GameLayer::onTouchBegan(Touch* touch, Event* unused_event)
 {
     bool ret = false;
@@ -529,54 +591,4 @@ void GameLayer::onTouchEnded(Touch* touch, Event* unused_event)
 void GameLayer::onTouchCancelled(Touch* touch, Event* unused_event)
 {
     onTouchEnded(touch, unused_event);
-}
-
-//ゲームクリア処理及び次のステージへの移動
-void GameLayer::successGame()
-{
-    auto success = Sprite::create("success.png");
-    success->setPosition(Point(WINSIZE / 2));
-    success->setScale(1.5);
-    success->setOpacity(0);
-    addChild(success, Z_Result);
-    
-    auto fadein = FadeIn::create(0.5);
-    auto delay = DelayTime::create(1.0);
-    auto fadeout = FadeOut::create(0.5);
-    auto func = CallFunc::create([this]()
-    {
-        int nextlevel;
-        if(_level >= 3)
-        {
-            nextlevel = 1;
-        }
-        else
-        {
-            nextlevel = _level + 1;
-        }
-        
-        auto scene = GameLayer::createScene(_remaining, nextlevel);
-        Director::getInstance()->replaceScene(scene);
-    });
-    
-    auto sequence = Sequence::create(fadein, delay, fadeout, func, nullptr);
-    success->runAction(sequence);
-}
-
-//ゲームオーバー判定
-void GameLayer::failureGame(float dt)
-{
-    unscheduleUpdate();
-    
-    if(--_remaining <= 0)
-    {
-        auto failure = Sprite::create("failure.png");
-        failure->setPosition(Point(WINSIZE / 2));
-        failure->setScale(1.5);
-        addChild(failure, Z_Result);
-    }
-    else{
-        removeChildByTag(T_Ball);
-        createBall();
-    }
 }
