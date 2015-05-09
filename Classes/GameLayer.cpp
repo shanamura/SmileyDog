@@ -531,10 +531,12 @@ void GameLayer::onTouchCancelled(Touch* touch, Event* unused_event)
     onTouchEnded(touch, unused_event);
 }
 
+//ゲームクリア処理及び次のステージへの移動
 void GameLayer::successGame()
 {
     auto success = Sprite::create("success.png");
     success->setPosition(Point(WINSIZE / 2));
+    success->setScale(1.5);
     success->setOpacity(0);
     addChild(success, Z_Result);
     
@@ -561,6 +563,7 @@ void GameLayer::successGame()
     success->runAction(sequence);
 }
 
+//ゲームオーバー判定
 void GameLayer::failureGame(float dt)
 {
     unscheduleUpdate();
@@ -569,6 +572,7 @@ void GameLayer::failureGame(float dt)
     {
         auto failure = Sprite::create("failure.png");
         failure->setPosition(Point(WINSIZE / 2));
+        failure->setScale(1.5);
         addChild(failure, Z_Result);
     }
     else{
