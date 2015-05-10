@@ -70,7 +70,7 @@ void TitleLayer::createButton()
 {
     auto button = ControlButton::create(Scale9Sprite::create("getready.png"));
     button->setAdjustBackgroundImage(false);
-    
+
     button->setPosition(Point(WINSIZE / 2));
     
     button->addTargetWithActionForControlEvents(this, cccontrol_selector(TitleLayer::onTapButton), Control::EventType::TOUCH_UP_INSIDE);

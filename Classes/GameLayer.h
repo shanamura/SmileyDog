@@ -26,6 +26,10 @@ protected:
         T_Gum2,
         T_Block,
         
+        T_Remaining1,
+        T_Remaining2,
+        T_Remaining3,
+        
         T_Lebel,
     };
     
@@ -40,6 +44,10 @@ protected:
         Z_Gum1,
         Z_Launcher1,
         Z_Block,
+        
+        Z_Remaining1,
+        Z_Remaining2,
+        Z_Remaining3,
         
         Z_Fog,
         Z_Star,
@@ -63,6 +71,9 @@ protected:
     
     void showStageLebel();
     void removeStageLebel(float dt);
+    
+    void createRemaining(int remaining);
+    void removeRemaining(int remaining);
     
     void createBackground();
     void createGround();

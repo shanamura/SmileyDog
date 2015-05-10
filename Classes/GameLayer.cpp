@@ -12,11 +12,21 @@
 
 #define WINSIZE Director::getInstance()->getWinSize()
 
-#define BALL_INIT_POS Point(100, 150)
-#define BALL_STRETCH_LENGTH 50
+#define BALL_INIT_POS Point(200, 150)
+#define BALL_STRETCH_LENGTH 80
 
-#define LAUNCHER_POS1 Point(80, 135)
-#define LAUNCHER_POS2 Point(125, 140)
+#define LAUNCHER_POS1 Point(180, 135)
+#define LAUNCHER_POS2 Point(225, 140)
+
+#define REMAINING_POS1 Point(50, WINSIZE.height - 50)
+#define REMAINING_POS2 Point(100, WINSIZE.height - 50)
+
+#define REMAINING_TAG1 T_Remaining1
+#define REMAINING_TAG2 T_Remaining2
+
+#define REMAINING_Z1 Z_Remaining1
+#define REMAINING_Z2 Z_Remaining2
+
 
 USING_NS_CC;
 using namespace CocosDenshion;
@@ -69,8 +79,8 @@ bool GameLayer::init(int remaining, int level)
     
     //サウンドデータの読み込み
     auto audio = SimpleAudioEngine::getInstance();
-    audio->preloadEffect("bgm.mp3");
-    audio->preloadEffect("bgm.mp3");
+    audio->preloadEffect("fire.mp3");
+    audio->preloadEffect("hit.mp3");
     
     return true;
 }
@@ -93,6 +103,10 @@ void GameLayer::onEnter()
     createBall();
     
     createBlockAndEnemy(_level);
+    
+    for(int i = 1; i <= _remaining; i++){
+        createRemaining(i);
+    }
 }
 
 //ゲームクリア判定
@@ -136,6 +150,50 @@ void GameLayer::removeStageLebel(float dt)
     levelLayer->runAction(Sequence::create(FadeTo::create(0.5, 0), RemoveSelf::create(),nullptr));
 }
 
+//残機の表示
+void GameLayer::createRemaining(int remaining)
+{
+    auto remainingSprite = Sprite::create("ball.png");
+    
+    switch (remaining) {
+        case 1:
+        default:
+            break;
+        case 2:
+        {
+            remainingSprite->setPosition(REMAINING_POS1);
+            remainingSprite->setTag(T_Remaining1);
+            addChild(remainingSprite, Z_Remaining1);
+            break;
+        }
+        case 3:
+        {
+            remainingSprite->setPosition(REMAINING_POS2);
+            remainingSprite->setTag(T_Remaining2);
+            addChild(remainingSprite, Z_Remaining2);
+            break;
+        }
+    }
+}
+
+//残機の更新
+void GameLayer::removeRemaining(int remaining)
+{
+    switch (remaining) {
+        case 1:
+        {
+            removeChildByTag(T_Remaining1);
+            break;
+        }
+        case 2:
+        {
+            removeChildByTag(T_Remaining2);
+            break;
+        }
+        default:
+            break;
+    }
+}
 
 //背景の作成
 void GameLayer::createBackground()
@@ -191,7 +249,7 @@ void GameLayer::createBall()
     //発射台
     auto launcher1 = Sprite::create("launcher1.png");
     launcher1->setScale(0.5);
-    launcher1->setPosition(Point(100, 100));
+    launcher1->setPosition(Point(200, 100));
     addChild(launcher1, Z_Launcher1);
     
     auto launcher2 = Sprite::create("launcher2.png");
@@ -231,45 +289,219 @@ void GameLayer::createBlockAndEnemy(int level)
             //ステージ1
         case 1:
         {
-            createEnemy(Point(636, 125));
-            
-            createBlock(BlockType::Stone, Point(536, 75), 0);
-            createBlock(BlockType::Stone, Point(636, 75), 0);
-            createBlock(BlockType::Stone, Point(736, 75), 0);
-            
-            createBlock(BlockType::Block1, Point(586, 150), 90);
-            createBlock(BlockType::Block1, Point(586, 250), 90);
-            createBlock(BlockType::Block1, Point(686, 150), 90);
-            createBlock(BlockType::Block1, Point(686, 250), 90);
-            
-            createBlock(BlockType::Roof, Point(636, 325), 0);
-            break;
-        }
-            //ステージ2
-        case 2:
-        {
-            createEnemy(Point(536, 125));
-            createEnemy(Point(636, 125));
             createEnemy(Point(736, 125));
             
-            createBlock(BlockType::Stone, Point(436, 75), 0);
-            createBlock(BlockType::Stone, Point(536, 75), 0);
             createBlock(BlockType::Stone, Point(636, 75), 0);
             createBlock(BlockType::Stone, Point(736, 75), 0);
             createBlock(BlockType::Stone, Point(836, 75), 0);
             
-            createBlock(BlockType::Block1, Point(486, 150), 90);
+            createBlock(BlockType::Block1, Point(686, 150), 90);
+            createBlock(BlockType::Block1, Point(686, 250), 90);
+            createBlock(BlockType::Block1, Point(786, 150), 90);
+            createBlock(BlockType::Block1, Point(786, 250), 90);
+            
+            createBlock(BlockType::Roof, Point(736, 325), 0);
+            break;
+        }
+
+        case 2:
+        {
+            createEnemy(Point(636, 125));
+            createEnemy(Point(736, 125));
+            createEnemy(Point(836, 125));
+            
+            createBlock(BlockType::Stone, Point(536, 75), 0);
+            createBlock(BlockType::Stone, Point(636, 75), 0);
+            createBlock(BlockType::Stone, Point(736, 75), 0);
+            createBlock(BlockType::Stone, Point(836, 75), 0);
+            createBlock(BlockType::Stone, Point(936, 75), 0);
+            
             createBlock(BlockType::Block1, Point(586, 150), 90);
             createBlock(BlockType::Block1, Point(686, 150), 90);
             createBlock(BlockType::Block1, Point(786, 150), 90);
+            createBlock(BlockType::Block1, Point(886, 150), 90);
             
-            createBlock(BlockType::Roof, Point(536, 225), 0);
             createBlock(BlockType::Roof, Point(636, 225), 0);
             createBlock(BlockType::Roof, Point(736, 225), 0);
+            createBlock(BlockType::Roof, Point(836, 225), 0);
             break;
         }
-            //ステージ3
+            
         case 3:
+        {
+            createEnemy(Point(636, 125));
+            createEnemy(Point(736, 125));
+            createEnemy(Point(736, 245));
+            createEnemy(Point(836, 125));
+            
+            createBlock(BlockType::Stone, Point(536, 75), 0);
+            createBlock(BlockType::Stone, Point(636, 75), 0);
+            createBlock(BlockType::Stone, Point(736, 75), 0);
+            createBlock(BlockType::Stone, Point(836, 75), 0);
+            createBlock(BlockType::Stone, Point(936, 75), 0);
+            
+            createBlock(BlockType::Block1, Point(586, 150), 90);
+            createBlock(BlockType::Block1, Point(686, 150), 90);
+            createBlock(BlockType::Block1, Point(786, 150), 90);
+            createBlock(BlockType::Block1, Point(886, 150), 90);
+            
+            createBlock(BlockType::Block1, Point(636, 210), 0);
+            createBlock(BlockType::Block1, Point(736, 210), 0);
+            createBlock(BlockType::Block1, Point(836, 210), 0);
+            
+            createBlock(BlockType::Block1, Point(686, 270), 90);
+            createBlock(BlockType::Block1, Point(786, 270), 90);
+            
+            createBlock(BlockType::Roof, Point(736, 345), 0);
+            break;
+        }
+            
+        case 4:
+        {
+            createEnemy(Point(636, 125));
+            createEnemy(Point(736, 125));
+            createEnemy(Point(736, 245));
+            createEnemy(Point(836, 125));
+            
+            createBlock(BlockType::Stone, Point(536, 75), 0);
+            createBlock(BlockType::Block1, Point(636, 75), 0);
+            createBlock(BlockType::Stone, Point(736, 75), 0);
+            createBlock(BlockType::Block1, Point(836, 75), 0);
+            createBlock(BlockType::Stone, Point(936, 75), 0);
+            
+            createBlock(BlockType::Block2, Point(586, 150), 90);
+            createBlock(BlockType::Block2, Point(686, 150), 90);
+            createBlock(BlockType::Block2, Point(786, 150), 90);
+            createBlock(BlockType::Block2, Point(886, 150), 90);
+            
+            createBlock(BlockType::Block1, Point(636, 210), 0);
+            createBlock(BlockType::Block1, Point(736, 210), 0);
+            createBlock(BlockType::Block1, Point(836, 210), 0);
+            
+            createBlock(BlockType::Block1, Point(686, 270), 90);
+            createBlock(BlockType::Block1, Point(786, 270), 90);
+            
+            createBlock(BlockType::Roof, Point(736, 345), 0);
+            break;
+        }
+            
+        case 5:
+        {
+            createEnemy(Point(636, 125));
+            createEnemy(Point(736, 125));
+            createEnemy(Point(736, 245));
+            createEnemy(Point(836, 125));
+            
+            createBlock(BlockType::Stone, Point(536, 75), 0);
+            createBlock(BlockType::Stone, Point(636, 75), 0);
+            createBlock(BlockType::Stone, Point(736, 75), 0);
+            createBlock(BlockType::Stone, Point(836, 75), 0);
+            createBlock(BlockType::Stone, Point(936, 75), 0);
+            
+            createBlock(BlockType::Block1, Point(586, 150), 90);
+            createBlock(BlockType::Block1, Point(686, 150), 90);
+            createBlock(BlockType::Block1, Point(786, 150), 90);
+            createBlock(BlockType::Block1, Point(886, 150), 90);
+            
+            createBlock(BlockType::Block2, Point(636, 210), 0);
+            createBlock(BlockType::Block2, Point(736, 210), 0);
+            createBlock(BlockType::Block2, Point(836, 210), 0);
+            
+            createBlock(BlockType::Block1, Point(686, 270), 90);
+            createBlock(BlockType::Block1, Point(786, 270), 90);
+            
+            createBlock(BlockType::Roof, Point(736, 345), 0);
+            break;
+        }
+
+        case 6:
+        {
+            createEnemy(Point(636, 125));
+            createEnemy(Point(736, 125));
+            createEnemy(Point(736, 245));
+            createEnemy(Point(836, 125));
+            
+            createBlock(BlockType::Stone, Point(536, 75), 0);
+            createBlock(BlockType::Stone, Point(636, 75), 0);
+            createBlock(BlockType::Stone, Point(736, 75), 0);
+            createBlock(BlockType::Stone, Point(836, 75), 0);
+            createBlock(BlockType::Stone, Point(936, 75), 0);
+            
+            createBlock(BlockType::Block1, Point(586, 150), 90);
+            createBlock(BlockType::Block2, Point(686, 150), 90);
+            createBlock(BlockType::Block2, Point(786, 150), 90);
+            createBlock(BlockType::Block1, Point(886, 150), 90);
+            
+            createBlock(BlockType::Block1, Point(636, 210), 0);
+            createBlock(BlockType::Block2, Point(736, 210), 0);
+            createBlock(BlockType::Block1, Point(836, 210), 0);
+            
+            createBlock(BlockType::Block1, Point(686, 270), 90);
+            createBlock(BlockType::Block1, Point(786, 270), 90);
+            
+            createBlock(BlockType::Roof, Point(736, 345), 0);
+            break;
+        }
+
+        case 7:
+        {
+            createEnemy(Point(636, 125));
+            createEnemy(Point(736, 125));
+            createEnemy(Point(736, 245));
+            createEnemy(Point(836, 125));
+            
+            createBlock(BlockType::Stone, Point(536, 75), 0);
+            createBlock(BlockType::Stone, Point(636, 75), 0);
+            createBlock(BlockType::Stone, Point(736, 75), 0);
+            createBlock(BlockType::Stone, Point(836, 75), 0);
+            createBlock(BlockType::Stone, Point(936, 75), 0);
+            
+            createBlock(BlockType::Block1, Point(586, 150), 90);
+            createBlock(BlockType::Block1, Point(686, 150), 90);
+            createBlock(BlockType::Block1, Point(786, 150), 90);
+            createBlock(BlockType::Block1, Point(886, 150), 90);
+            
+            createBlock(BlockType::Block2, Point(636, 210), 0);
+            createBlock(BlockType::Block1, Point(736, 210), 0);
+            createBlock(BlockType::Block2, Point(836, 210), 0);
+            
+            createBlock(BlockType::Block1, Point(686, 270), 90);
+            createBlock(BlockType::Block1, Point(786, 270), 90);
+            
+            createBlock(BlockType::Roof, Point(736, 345), 0);
+            break;
+        }
+
+        case 8:
+        {
+            createEnemy(Point(636, 125));
+            createEnemy(Point(736, 125));
+            createEnemy(Point(736, 245));
+            createEnemy(Point(836, 125));
+            
+            createBlock(BlockType::Stone, Point(536, 75), 0);
+            createBlock(BlockType::Stone, Point(636, 75), 0);
+            createBlock(BlockType::Stone, Point(736, 75), 0);
+            createBlock(BlockType::Stone, Point(836, 75), 0);
+            createBlock(BlockType::Stone, Point(936, 75), 0);
+            
+            createBlock(BlockType::Block1, Point(586, 150), 90);
+            createBlock(BlockType::Block1, Point(686, 150), 90);
+            createBlock(BlockType::Block1, Point(786, 150), 90);
+            createBlock(BlockType::Block1, Point(886, 150), 90);
+            
+            createBlock(BlockType::Block1, Point(636, 210), 0);
+            createBlock(BlockType::Block1, Point(736, 210), 0);
+            createBlock(BlockType::Block1, Point(836, 210), 0);
+            
+            createBlock(BlockType::Block1, Point(686, 270), 90);
+            createBlock(BlockType::Block1, Point(786, 270), 90);
+            
+            createBlock(BlockType::Roof, Point(736, 345), 0);
+            break;
+        }
+            
+        default:
         {
             createEnemy(Point(536, 125));
             createEnemy(Point(636, 125));
@@ -277,9 +509,9 @@ void GameLayer::createBlockAndEnemy(int level)
             createEnemy(Point(736, 125));
             
             createBlock(BlockType::Stone, Point(436, 75), 0);
-            createBlock(BlockType::Stone, Point(536, 75), 0);
+            createBlock(BlockType::Block2, Point(536, 75), 0);
             createBlock(BlockType::Stone, Point(636, 75), 0);
-            createBlock(BlockType::Stone, Point(736, 75), 0);
+            createBlock(BlockType::Block2, Point(736, 75), 0);
             createBlock(BlockType::Stone, Point(836, 75), 0);
             
             createBlock(BlockType::Block1, Point(486, 150), 90);
@@ -291,15 +523,13 @@ void GameLayer::createBlockAndEnemy(int level)
             createBlock(BlockType::Block1, Point(636, 210), 0);
             createBlock(BlockType::Block1, Point(736, 210), 0);
             
-            createBlock(BlockType::Block1, Point(586, 270), 90);
-            createBlock(BlockType::Block1, Point(686, 270), 90);
+            createBlock(BlockType::Block2, Point(586, 270), 90);
+            createBlock(BlockType::Block2, Point(686, 270), 90);
             
             createBlock(BlockType::Roof, Point(636, 345), 0);
             break;
         }
-            
-        default:
-            break;
+
     }
 }
 
@@ -511,7 +741,7 @@ void GameLayer::successGame()
     {
         int nextlevel;
         
-        if(_level >= 3)
+        if(_level >= 9)
         {
             nextlevel = 1;
         }
@@ -540,8 +770,20 @@ void GameLayer::failureGame(float dt)
         failure->setPosition(Point(WINSIZE / 2));
         failure->setScale(1.5);
         addChild(failure, Z_Result);
+        
+        auto delay = DelayTime::create(2.0);
+        auto func = CallFunc::create([this]()
+        {
+            auto scene = TitleLayer::createScene();
+            auto tran = TransitionFade::create(2.0, scene);
+            Director::getInstance()->replaceScene(tran);
+        });
+        
+        auto sequence = Sequence::create(delay, func, nullptr);
+        failure->runAction(sequence);
     }
     else{
+        removeRemaining(_remaining);
         removeChildByTag(T_Ball);
         createBall();
     }
