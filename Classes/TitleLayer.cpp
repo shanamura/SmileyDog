@@ -55,14 +55,23 @@ void TitleLayer::onEnter()
     createButton();
 }
 
-//タイトル背景画像の作成
+//タイトル画面の作成
 void TitleLayer::createTitle()
 {
+    //背景の作成
     auto background = Sprite::create("background.png");
     background->setAnchorPoint(Point(0, 0.5));
     background->setPosition(Point(0, WINSIZE.height /2));
     
     addChild(background);
+    
+    //タイトル文の作成
+    auto titleLabel = Label::createWithSystemFont("白犬を引っ張って黒犬に当てよう。\n3回失敗するとゲームオーバーになるよ。", "Arial", 48);
+    //auto titleLabel = LabelTTF::create("白犬を引っ張って黒犬に当てよう。全部倒すとステージクリア ¥n 3回失敗するとゲームオーバーになるよ。", "Arial", 48);
+    titleLabel->setColor(Color3B::BLACK);
+    titleLabel->setPosition(Point(WINSIZE.width / 2, WINSIZE.height / 3 * 2));
+    titleLabel->setHorizontalAlignment(TextHAlignment::CENTER);
+    addChild(titleLabel);
 }
 
 //スタートボタンの作成
@@ -71,7 +80,7 @@ void TitleLayer::createButton()
     auto button = ControlButton::create(Scale9Sprite::create("getready.png"));
     button->setAdjustBackgroundImage(false);
 
-    button->setPosition(Point(WINSIZE / 2));
+    button->setPosition(Point(WINSIZE.width / 2, WINSIZE.height / 3));
     
     button->addTargetWithActionForControlEvents(this, cccontrol_selector(TitleLayer::onTapButton), Control::EventType::TOUCH_UP_INSIDE);
     

@@ -13,7 +13,7 @@
 #define WINSIZE Director::getInstance()->getWinSize()
 
 #define BALL_INIT_POS Point(200, 150)
-#define BALL_STRETCH_LENGTH 80
+#define BALL_STRETCH_LENGTH 50
 
 #define LAUNCHER_POS1 Point(180, 135)
 #define LAUNCHER_POS2 Point(225, 140)
@@ -665,7 +665,7 @@ bool GameLayer::onContactBegin(PhysicsContact& contact)
             object = bodyA;
         }
         
-        if(object && object->getVelocity().getLength() > 10)
+        if(object && object->getVelocity().getLength() > 40)
         {
             //敵キャラの削除
             removingEnemy(enemy);
