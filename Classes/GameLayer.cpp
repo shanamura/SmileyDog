@@ -411,9 +411,9 @@ void GameLayer::createBlockAndEnemy(int level)
             createBlock(BlockType::Block1, Point(786, 270), 90);
             createBlock(BlockType::Block1, Point(886, 270), 90);
             
-            createBlock(BlockType::Roof, Point(536, 345), 0);
             createBlock(BlockType::Roof, Point(636, 345), 0);
             createBlock(BlockType::Roof, Point(736, 345), 0);
+            createBlock(BlockType::Roof, Point(836, 345), 0);
             break;
         }
 
