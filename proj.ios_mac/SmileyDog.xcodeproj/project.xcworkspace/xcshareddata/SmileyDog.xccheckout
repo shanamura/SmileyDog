@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>354CE60D-6A02-4FF8-A22B-8431F171E631</string>
 	<key>IDESourceControlProjectName</key>
-	<string>SmileyDog</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>59577C66C20DB58641CABDE6EE7A3FF682AE6449</key>
 		<string>https://github.com/shanamura/SmileyDog.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>proj.ios_mac/SmileyDog.xcodeproj</string>
+	<string>proj.ios_mac/SmileyDog.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>59577C66C20DB58641CABDE6EE7A3FF682AE6449</key>
