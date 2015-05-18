@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package net.tks2.projects;
+package net.shanamura.SmileyDog;
 
 public final class R {
     public static final class attr {
